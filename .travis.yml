@@ -14,3 +14,20 @@ matrix:
   allow_failures:
     - env: RUNNERS=camunda
     - env: RUNNERS=drools
+    
+jobs:
+  include:
+    - # only if tagged with results-something
+      if: (tag =~ ^results) AND (branch = master)
+      stage: deploy
+      script: cd runners && mvn install -B -P$RUNNERS
+      env: RUNNERS=reporter
+      provider: pages
+      skip-cleanup: true
+      local-dir: /docs
+      github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+      keep-history: true
+      verbose: true
+      deployment-file: true
+      on:
+        branch: master
