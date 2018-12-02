@@ -8,7 +8,7 @@ env:
   - RUNNERS=camunda
   - RUNNERS=drools
 
-script: cd runners && mvn verify -B -P$RUNNERS
+script: cd runners && mvn install -B -P$RUNNERS
 
 matrix:
   allow_failures:
@@ -20,7 +20,6 @@ jobs:
     - # only if tagged with results-something
       if: (tag =~ ^results) AND (branch = master)
       stage: deploy
-      script: cd runners && mvn install -B -P$RUNNERS
       env: RUNNERS=reporter
       provider: pages
       skip-cleanup: true
