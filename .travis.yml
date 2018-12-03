@@ -8,9 +8,26 @@ env:
   - RUNNERS=camunda
   - RUNNERS=drools
 
-script: cd runners && mvn verify -B -P$RUNNERS
+script: cd runners && mvn install -B -P$RUNNERS && cd ..
 
 matrix:
   allow_failures:
     - env: RUNNERS=camunda
     - env: RUNNERS=drools
+    
+jobs:
+  include:
+    - stage: deploy
+      env: RUNNERS=reporter
+      deploy:
+        provider: pages
+        # only if tagged with results-something
+        # if: (tag =~ ^results) AND (branch = master)
+        skip-cleanup: true
+        local-dir: docs
+        github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+        keep-history: true
+        verbose: true
+        deployment-file: true
+        allow-empty-commit: true
+        
